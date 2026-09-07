@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rakiya — Digitizing Sri Lanka's Informal Labor Market</title>
+<meta name="description" content="Rakiya is a hyperlocal marketplace connecting casual workers with small businesses across Sri Lanka for short-term, single-day work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0f1c;
+    --bg-panel:#0e1526;
+    --bg-panel-2:#0c1220;
+    --teal:#2fd1c4;
+    --teal-dim:#1b7a72;
+    --saffron:#f5a93c;
+    --saffron-dim:#a1701f;
+    --sand:#f4eee2;
+    --muted:#8b93a7;
+    --line:rgba(244,238,226,0.09);
+    --line-strong:rgba(244,238,226,0.18);
+    --radius:14px;
+    --display:'Bricolage Grotesque', system-ui, sans-serif;
+    --body:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--sand);
+    font-family:var(--body);
+    line-height:1.55;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--teal);color:#04110f;}
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+
+  h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-0.01em;line-height:1.05;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--teal);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:7px;height:7px;border-radius:50%;
+    background:var(--teal);
+    box-shadow:0 0 10px var(--teal);
+  }
+  .eyebrow.saffron{color:var(--saffron);}
+  .eyebrow.saffron::before{background:var(--saffron);box-shadow:0 0 10px var(--saffron);}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  section{position:relative;padding:120px 0;}
+  @media (max-width:720px){ section{padding:80px 0;} }
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,.8,.24,1), transform .8s cubic-bezier(.16,.8,.24,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+  .reveal-stagger > *{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.16,.8,.24,1), transform .7s cubic-bezier(.16,.8,.24,1);}
+  .reveal-stagger.in > *{opacity:1;transform:translateY(0);}
+  .reveal-stagger.in > *:nth-child(1){transition-delay:.02s;}
+  .reveal-stagger.in > *:nth-child(2){transition-delay:.10s;}
+  .reveal-stagger.in > *:nth-child(3){transition-delay:.18s;}
+  .reveal-stagger.in > *:nth-child(4){transition-delay:.26s;}
+  .reveal-stagger.in > *:nth-child(5){transition-delay:.34s;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(10,15,28,0.72);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    max-width:1180px;margin:0 auto;padding:16px 28px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:1.15rem;}
+  .brand .mark{
+    width:32px;height:32px;border-radius:9px;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dim));
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--display);font-weight:800;color:#04110f;font-size:1.05rem;
+  }
+  .navlinks{display:flex;gap:32px;font-size:0.88rem;color:var(--muted);}
+  .navlinks a{transition:color .2s;}
+  .navlinks a:hover{color:var(--sand);}
+  .nav-cta{
+    font-family:var(--mono);font-size:0.78rem;letter-spacing:0.04em;
+    border:1px solid var(--line-strong);padding:9px 16px;border-radius:100px;
+    transition:border-color .2s, background .2s;
+  }
+  .nav-cta:hover{border-color:var(--teal);background:rgba(47,209,196,0.08);}
+  .navtoggle{display:none;background:none;border:none;color:var(--sand);font-size:1.4rem;cursor:pointer;}
+  @media (max-width:860px){
+    .navlinks{display:none;}
+    .navtoggle{display:block;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;min-height:100vh;display:flex;align-items:center;
+    padding-top:120px;overflow:hidden;
+  }
+  #field-canvas{
+    position:absolute;inset:0;width:100%;height:100%;
+    z-index:0;
+    mask-image:linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image:linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+  .hero-inner{position:relative;z-index:2;}
+  .hero h1{
+    font-size:clamp(2.6rem,6vw,5rem);
+    max-width:900px;
+    margin-bottom:22px;
+  }
+  .hero h1 em{
+    font-style:normal;
+    background:linear-gradient(90deg,var(--teal),var(--saffron));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lede{
+    font-size:1.15rem;color:var(--muted);max-width:600px;margin-bottom:40px;
+  }
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:72px;}
+  .btn{
+    font-family:var(--mono);font-size:0.85rem;letter-spacing:0.03em;
+    padding:14px 26px;border-radius:100px;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .2s, box-shadow .2s, background .2s;
+  }
+  .btn-primary{background:var(--teal);color:#04110f;font-weight:600;}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(47,209,196,0.5);}
+  .btn-ghost{border:1px solid var(--line-strong);color:var(--sand);}
+  .btn-ghost:hover{border-color:var(--sand);}
+
+  .stat-strip{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .stat-strip div{
+    padding:22px 24px;border-right:1px solid var(--line);
+  }
+  .stat-strip div:last-child{border-right:none;}
+  .stat-num{font-family:var(--mono);font-size:1.5rem;color:var(--teal);font-weight:600;}
+  .stat-label{font-size:0.78rem;color:var(--muted);margin-top:4px;}
+  @media (max-width:760px){
+    .stat-strip{grid-template-columns:repeat(2,1fr);}
+    .stat-strip div:nth-child(2){border-right:none;}
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section-head{max-width:640px;margin-bottom:64px;}
+  .section-head h2{font-size:clamp(1.9rem,3.6vw,2.8rem);margin-bottom:18px;}
+  .section-head p{color:var(--muted);font-size:1.05rem;}
+
+  /* ---------- PROBLEM ---------- */
+  .problem{background:var(--bg-panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .problem-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:64px;align-items:start;}
+  @media (max-width:900px){.problem-grid{grid-template-columns:1fr;}}
+  .problem-copy p{color:var(--muted);margin-bottom:20px;font-size:1.02rem;}
+  .problem-copy strong{color:var(--sand);font-weight:600;}
+  .side-cards{display:flex;flex-direction:column;gap:14px;}
+  .stat-card{
+    border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;
+    background:var(--bg-panel-2);
+    display:flex;justify-content:space-between;align-items:center;
+    transition:border-color .25s, transform .25s;
+  }
+  .stat-card:hover{border-color:var(--line-strong);transform:translateX(4px);}
+  .stat-card .big{font-family:var(--mono);font-size:2rem;font-weight:600;color:var(--saffron);}
+  .stat-card .desc{color:var(--muted);font-size:0.86rem;max-width:220px;text-align:right;}
+
+  /* ---------- DIFFERENTIATORS ---------- */
+  .pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  @media (max-width:960px){.pillars{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.pillars{grid-template-columns:1fr;}}
+  .pillar{background:var(--bg);padding:34px 26px;}
+  .pillar .ring-icon{margin-bottom:22px;}
+  .pillar h3{font-size:1.08rem;margin-bottom:10px;font-weight:600;}
+  .pillar p{color:var(--muted);font-size:0.9rem;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .tracks{display:grid;grid-template-columns:1fr 1fr;gap:48px;}
+  @media (max-width:860px){.tracks{grid-template-columns:1fr;}}
+  .track{border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px;background:var(--bg-panel-2);}
+  .track-head{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+  .track-head .dot{width:10px;height:10px;border-radius:50%;}
+  .track.worker .dot{background:var(--teal);box-shadow:0 0 10px var(--teal);}
+  .track.employer .dot{background:var(--saffron);box-shadow:0 0 10px var(--saffron);}
+  .track-head h3{font-size:1.15rem;font-weight:600;}
+  .step{display:flex;gap:16px;padding:16px 0;border-top:1px solid var(--line);}
+  .step:first-of-type{border-top:none;}
+  .step .num{font-family:var(--mono);color:var(--muted);font-size:0.82rem;padding-top:2px;min-width:22px;}
+  .step .txt h4{font-size:0.95rem;font-weight:600;margin-bottom:4px;}
+  .step .txt p{color:var(--muted);font-size:0.86rem;}
+
+  /* ---------- COMPARISON ---------- */
+  .compare{background:var(--bg-panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .radius-compare{display:flex;align-items:center;justify-content:center;gap:70px;flex-wrap:wrap;margin-bottom:70px;padding:50px 20px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-panel-2);}
+  .radius-item{text-align:center;}
+  .radius-item .circle{border-radius:50%;margin:0 auto 18px;border:1.5px solid var(--line-strong);position:relative;display:flex;align-items:center;justify-content:center;}
+  .radius-item .circle::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(244,238,226,0.03),transparent 70%);}
+  .radius-item.district .circle{width:260px;height:260px;border-color:rgba(139,147,167,0.5);}
+  .radius-item.rakiya .circle{width:96px;height:96px;border-color:var(--teal);box-shadow:0 0 30px -6px rgba(47,209,196,0.5);}
+  .radius-item .circle .pin{width:9px;height:9px;border-radius:50%;background:var(--sand);}
+  .radius-item .cap{font-family:var(--mono);font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+  .radius-item .val{font-family:var(--mono);font-size:1.3rem;color:var(--sand);font-weight:600;}
+  .vs{font-family:var(--mono);color:var(--muted);font-size:0.9rem;}
+
+  table.cmp{width:100%;border-collapse:collapse;font-size:0.92rem;}
+  table.cmp th, table.cmp td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line);}
+  table.cmp th{font-family:var(--mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:500;}
+  table.cmp td:first-child{font-weight:600;}
+  table.cmp tr:last-child td{border-bottom:none;}
+  table.cmp .yes{color:var(--teal);}
+  table.cmp .no{color:var(--muted);}
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);padding:6px 22px;background:var(--bg-panel-2);}
+
+  /* ---------- MARKET ---------- */
+  .market-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+  @media (max-width:900px){.market-grid{grid-template-columns:1fr;}}
+  .mini-map{position:relative;aspect-ratio:1/1;border:1px solid var(--line);border-radius:var(--radius);background:
+    radial-gradient(circle at 30% 30%, rgba(47,209,196,0.10), transparent 55%),
+    radial-gradient(circle at 70% 65%, rgba(245,169,60,0.08), transparent 55%),
+    var(--bg-panel-2);
+    overflow:hidden;
+  }
+  .mini-map svg{position:absolute;inset:0;width:100%;height:100%;}
+  .market-copy p{color:var(--muted);margin-bottom:18px;}
+  .market-copy strong{color:var(--sand);}
+
+  /* ---------- ROADMAP ---------- */
+  .timeline{position:relative;padding-left:36px;}
+  .timeline::before{content:'';position:absolute;left:9px;top:6px;bottom:6px;width:1px;background:var(--line-strong);}
+  .tl-item{position:relative;padding-bottom:44px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:'';position:absolute;left:-36px;top:2px;width:19px;height:19px;border-radius:50%;
+    background:var(--bg);border:1.5px solid var(--teal);
+  }
+  .tl-item.done::before{background:var(--teal);}
+  .tl-item .tl-eyebrow{font-family:var(--mono);font-size:0.72rem;color:var(--saffron);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+  .tl-item h4{font-size:1.1rem;font-weight:600;margin-bottom:8px;}
+  .tl-item p{color:var(--muted);font-size:0.92rem;max-width:620px;}
+
+  /* ---------- TEAM ---------- */
+  .team-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  @media (max-width:900px){.team-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.team-grid{grid-template-columns:1fr;}}
+  .member{background:var(--bg);padding:28px 22px;}
+  .avatar{
+    width:46px;height:46px;border-radius:50%;
+    background:linear-gradient(135deg,var(--teal),var(--saffron));
+    margin-bottom:18px;
+  }
+  .member h4{font-size:0.98rem;font-weight:600;margin-bottom:4px;}
+  .member p{color:var(--muted);font-size:0.82rem;}
+
+  /* ---------- FOOTER / CTA ---------- */
+  footer{background:var(--bg-panel);border-top:1px solid var(--line);padding-top:100px;}
+  .cta-block{text-align:center;max-width:640px;margin:0 auto 90px;}
+  .cta-block h2{font-size:clamp(1.9rem,4vw,3rem);margin-bottom:20px;}
+  .cta-block p{color:var(--muted);margin-bottom:36px;}
+  .cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .foot-bottom{border-top:1px solid var(--line);padding:28px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:0.82rem;font-family:var(--mono);}
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal, .reveal-stagger > *{transition:none !important; opacity:1 !important; transform:none !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="brand"><span class="mark">R</span>Rakiya</div>
+    <div class="navlinks">
+      <a href="#problem">Problem</a>
+      <a href="#solution">Solution</a>
+      <a href="#how">How it works</a>
+      <a href="#market">Market</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#team">Team</a>
+    </div>
+    <a class="nav-cta" href="https://youtu.be/sGaUA3cHLgE" target="_blank" rel="noopener">Watch pitch ↗</a>
+  </nav>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <canvas id="field-canvas"></canvas>
+  <div class="wrap hero-inner">
+    <div class="eyebrow">HackX 11.0 · Team Inovex · University of Kelaniya</div>
+    <h1>Sri Lanka's informal<br>labor market, <em>found by distance,<br>not by district.</em></h1>
+    <p class="lede">Rakiya is a hyperlocal marketplace connecting casual workers with small businesses and event organizers for short-term, single-day work — matched within 10&ndash;15&nbsp;km, not a 1,000&nbsp;sq&nbsp;km district.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="#solution">See how it works</a>
+      <a class="btn btn-ghost" href="https://youtu.be/sGaUA3cHLgE" target="_blank" rel="noopener">Watch the pitch</a>
+    </div>
+  </div>
+  <div class="wrap" style="position:relative;z-index:2;">
+    <div class="stat-strip">
+      <div><div class="stat-num">58%</div><div class="stat-label">of employment is informal nationally</div></div>
+      <div><div class="stat-num">19.2%</div><div class="stat-label">youth unemployment, ages 15&ndash;24</div></div>
+      <div><div class="stat-num">75%</div><div class="stat-label">of Sri Lankan businesses are SMEs</div></div>
+      <div><div class="stat-num">10&ndash;15km</div><div class="stat-label">real matching radius, not a district</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEM ================= -->
+<section class="problem" id="problem">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow saffron">The problem</div>
+      <h2>A structural mismatch, repeated every week.</h2>
+      <p>Small businesses lose staff for a day. Students and informal workers want flexible income. Nothing connects them precisely, and nothing tracks what happens after.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-copy reveal">
+        <p><strong>Employers</strong> — shop owners, supermarkets, event organizers — have no fast, reliable way to fill a short-notice staffing gap. Their options: ask around, post in a WhatsApp group, or go without staff for the day.</p>
+        <p><strong>Workers</strong> — students, school leavers, informal laborers — have no organized channel to discover nearby short-term jobs. They rely on word of mouth or scrolling unstructured WhatsApp and Facebook groups.</p>
+        <p>The channels that exist today only filter jobs at the <strong>district level</strong> — a unit that can span over <strong>1,000 square kilometers</strong>. Even the closest competitor, SL Part Time, stops at the listing: once a worker is matched, attendance, payment, and outcome all move offline through phone calls, with nothing digitized on either side.</p>
+      </div>
+      <div class="side-cards reveal">
+        <div class="stat-card"><div class="big">4.30%</div><div class="desc">national unemployment, Q3 2025</div></div>
+        <div class="stat-card"><div class="big">20.8%</div><div class="desc">peak youth unemployment, Q2 2025</div></div>
+        <div class="stat-card"><div class="big">49.9%</div><div class="desc">labor force participation — half the working-age population isn't economically active</div></div>
+        <div class="stat-card"><div class="big">1M+</div><div class="desc">registered SMEs nationwide, the natural employer base</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOLUTION / PILLARS ================= -->
+<section id="solution">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">The solution</div>
+      <h2>Four things no local alternative does today.</h2>
+      <p>Rakiya doesn't invent informal work — it digitizes the full lifecycle of it: discovery, matching, and verified proof of completion.</p>
+    </div>
+    <div class="pillars reveal-stagger">
+      <div class="pillar">
+        <svg class="ring-icon" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" stroke="#2fd1c4" stroke-width="1" fill="none" opacity="0.35"/><circle cx="20" cy="20" r="11" stroke="#2fd1c4" stroke-width="1.5" fill="none"/><circle cx="20" cy="20" r="3" fill="#2fd1c4"/></svg>
+        <h3>Distance, not district</h3>
+        <p>Geohash-based proximity matching ranks jobs within 10&ndash;15&nbsp;km by real distance — work you can actually reach the same day.</p>
+      </div>
+      <div class="pillar">
+        <svg class="ring-icon" width="40" height="40" viewBox="0 0 40 40"><rect x="9" y="9" width="22" height="22" rx="5" stroke="#f5a93c" stroke-width="1.5" fill="none"/><path d="M14 20h12M20 14v12" stroke="#f5a93c" stroke-width="1.5"/></svg>
+        <h3>Trust built into the flow</h3>
+        <p>A worker's phone number stays hidden until the employer explicitly accepts — no unwanted contact before a match is real.</p>
+      </div>
+      <div class="pillar">
+        <svg class="ring-icon" width="40" height="40" viewBox="0 0 40 40"><path d="M8 26l8-14 8 10 8-16" stroke="#2fd1c4" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="6" r="2.2" fill="#2fd1c4"/></svg>
+        <h3>Two-sided verified proof</h3>
+        <p>Both sides confirm what actually happened — payment received, work quality rated — building a portfolio no competitor tracks in either direction.</p>
+      </div>
+      <div class="pillar">
+        <svg class="ring-icon" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="14" r="6" stroke="#f5a93c" stroke-width="1.5" fill="none"/><path d="M9 32c0-6.6 5-11 11-11s11 4.4 11 11" stroke="#f5a93c" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        <h3>Accessible by design</h3>
+        <p>Phone-number-only sign-in, a multilingual interface, and a WhatsApp-adjacent posting path — built for users who won't install another app.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="how">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow saffron">How it works</div>
+      <h2>One loop, two sides.</h2>
+      <p>Every job moves through the same lifecycle — posted, matched, worked, and mutually confirmed — whichever side you're on.</p>
+    </div>
+    <div class="tracks">
+      <div class="track worker reveal">
+        <div class="track-head"><span class="dot"></span><h3>As a worker</h3></div>
+        <div class="step"><div class="num">01</div><div class="txt"><h4>Discover nearby jobs</h4><p>See jobs ranked by real distance from where you are, not a district-wide list.</p></div></div>
+        <div class="step"><div class="num">02</div><div class="txt"><h4>Apply in one tap</h4><p>Your portfolio and rating go with the application — your number doesn't, yet.</p></div></div>
+        <div class="step"><div class="num">03</div><div class="txt"><h4>Get accepted</h4><p>Only once accepted does the employer see your contact details, and you can chat.</p></div></div>
+        <div class="step"><div class="num">04</div><div class="txt"><h4>Work, then confirm</h4><p>Confirm you received the exact payment promised — cash, online, meals, or travel.</p></div></div>
+        <div class="step"><div class="num">05</div><div class="txt"><h4>Build your record</h4><p>Every closed job adds to a verified portfolio future employers can see.</p></div></div>
+      </div>
+      <div class="track employer reveal">
+        <div class="track-head"><span class="dot"></span><h3>As an employer</h3></div>
+        <div class="step"><div class="num">01</div><div class="txt"><h4>Post the gap</h4><p>Role, pay, timing, and any physical requirements — a two-minute form.</p></div></div>
+        <div class="step"><div class="num">02</div><div class="txt"><h4>Review real applicants</h4><p>See ratings and completed job counts before you ever see a phone number.</p></div></div>
+        <div class="step"><div class="num">03</div><div class="txt"><h4>Accept &amp; reveal contact</h4><p>One tap unlocks the worker's number and opens a chat thread to confirm the shift.</p></div></div>
+        <div class="step"><div class="num">04</div><div class="txt"><h4>Get the work done</h4><p>The worker shows up, does the job, and gets paid exactly as posted.</p></div></div>
+        <div class="step"><div class="num">05</div><div class="txt"><h4>Rate &amp; close</h4><p>Rate the work to close the job and build your own reputation as a fair employer.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COMPARISON ================= -->
+<section class="compare" id="compare">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Why this wins</div>
+      <h2>Precision is the whole product.</h2>
+      <p>Every existing option — WhatsApp groups, Facebook groups, general job boards, even the closest competitor — stops at an unstructured listing.</p>
+    </div>
+    <div class="radius-compare reveal">
+      <div class="radius-item district">
+        <div class="circle"><div class="pin"></div></div>
+        <div class="cap">District filtering</div>
+        <div class="val">1,000+ km&sup2;</div>
+      </div>
+      <div class="vs">vs.</div>
+      <div class="radius-item rakiya">
+        <div class="circle"><div class="pin"></div></div>
+        <div class="cap">Rakiya, geohash-ranked</div>
+        <div class="val">10&ndash;15 km</div>
+      </div>
+    </div>
+    <div class="table-wrap reveal">
+      <table class="cmp">
+        <thead><tr><th>Platform</th><th>Matching</th><th>After the match</th><th>Verified proof</th></tr></thead>
+        <tbody>
+          <tr><td>SL Part Time</td><td class="no">District-level</td><td class="no">Calls, manual</td><td class="no">None</td></tr>
+          <tr><td>WhatsApp / Facebook groups</td><td class="no">None — chronological feed</td><td class="no">Off-platform</td><td class="no">None</td></tr>
+          <tr><td>General job boards</td><td class="no">Built for permanent roles</td><td class="no">N/A</td><td class="no">None</td></tr>
+          <tr><td><strong>Rakiya</strong></td><td class="yes">Geohash, 10&ndash;15 km</td><td class="yes">On-platform, contact-gated</td><td class="yes">Mutual, two-sided</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MARKET / PILOT ================= -->
+<section id="market">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow saffron">Go-to-market</div>
+      <h2>Starting where the cold start problem is solvable.</h2>
+    </div>
+    <div class="market-grid">
+      <div class="mini-map reveal">
+        <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="glowT" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#2fd1c4" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#2fd1c4" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="glowS" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#f5a93c" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#f5a93c" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <g stroke="rgba(244,238,226,0.08)" stroke-width="1">
+            <line x1="0" y1="80" x2="400" y2="80"/><line x1="0" y1="160" x2="400" y2="160"/>
+            <line x1="0" y1="240" x2="400" y2="240"/><line x1="0" y1="320" x2="400" y2="320"/>
+            <line x1="80" y1="0" x2="80" y2="400"/><line x1="160" y1="0" x2="160" y2="400"/>
+            <line x1="240" y1="0" x2="240" y2="400"/><line x1="320" y1="0" x2="320" y2="400"/>
+          </g>
+          <circle cx="180" cy="190" r="70" fill="none" stroke="#2fd1c4" stroke-width="1" opacity="0.4"/>
+          <circle cx="180" cy="190" r="70" fill="url(#glowT)" opacity="0.15"/>
+          <circle cx="180" cy="190" r="5" fill="#f5a93c"/>
+          <circle cx="140" cy="150" r="4" fill="#2fd1c4"/>
+          <circle cx="225" cy="175" r="4" fill="#2fd1c4"/>
+          <circle cx="205" cy="235" r="4" fill="#2fd1c4"/>
+          <circle cx="150" cy="220" r="4" fill="#2fd1c4"/>
+          <path d="M180 190 L140 150" stroke="#2fd1c4" stroke-width="1" opacity="0.5"/>
+          <path d="M180 190 L225 175" stroke="#2fd1c4" stroke-width="1" opacity="0.5"/>
+          <path d="M180 190 L205 235" stroke="#2fd1c4" stroke-width="1" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="market-copy reveal">
+        <p>The pilot launches in <strong>Gampaha town</strong>, within Gampaha District — the most populous district in Sri Lanka at roughly <strong>2.43 million people</strong>, and the second-largest urban center in the district after Colombo.</p>
+        <p>It's dense enough to solve the two-sided cold start problem — enough workers and employers active at once — without competing on day one in Colombo, the country's most saturated commercial market.</p>
+        <p>Onboarding is manual and concierge-led at first: the founding team directly signs up local shops and recruits an early worker base from university and school-leaver networks, validated against a real, time-bound demand event before expanding.</p>
+        <p><strong>Next:</strong> Colombo and other urban centers, once the model is proven at pilot scale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ROADMAP ================= -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Roadmap</div>
+      <h2>Six stages, in order.</h2>
+    </div>
+    <div class="timeline reveal-stagger">
+      <div class="tl-item done">
+        <div class="tl-eyebrow">Stage 1 — Current</div>
+        <h4>Hackathon build</h4>
+        <p>Self-serve job posting, geohash matching within 10&ndash;15 km, phone-only auth, contact reveal on acceptance, mutual rating and proof flow — the core loop, working end to end.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-eyebrow">Stage 2</div>
+        <h4>Pre-pilot hardening</h4>
+        <p>Close the two flagged pre-deployment gaps: production security rules and a real session/auth layer, plus a one-strike theft policy and a verified badge system.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-eyebrow">Stage 3</div>
+        <h4>Gampaha pilot</h4>
+        <p>Live launch with a small, manually onboarded set of employers and workers — validating that the mutual rating flow actually gets completed by both sides.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-eyebrow">Stage 4</div>
+        <h4>Post-pilot refinement</h4>
+        <p>Tighten the tag taxonomy against real postings, improve the WhatsApp bridge, and begin Sinhala interface work once speech-to-text accuracy is reassessed.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-eyebrow">Stage 5</div>
+        <h4>Expansion</h4>
+        <p>Extend into Colombo and other urban centers. Full WhatsApp Business API replaces the sandbox; a recruitment-agency commercial tier becomes relevant.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-eyebrow">Stage 6 — Not yet validated</div>
+        <h4>Future enhancement</h4>
+        <p>A B2G anonymized labor-market data licensing product, dependent on accumulated verified job history. Named honestly as a future idea, not a built feature.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TEAM ================= -->
+<section id="team">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow saffron">Team Inovex</div>
+      <h2>University of Kelaniya, Department of Accountancy.</h2>
+    </div>
+    <div class="team-grid reveal-stagger">
+      <div class="member"><div class="avatar"></div><h4>Zufar Illyas</h4><p>Team Lead &amp; Product Strategy</p></div>
+      <div class="member"><div class="avatar"></div><h4>Fathima Hilmy</h4><p>Creative &amp; Presentation Lead</p></div>
+      <div class="member"><div class="avatar"></div><h4>Ashini Wageesha</h4><p>Product Lead</p></div>
+      <div class="member"><div class="avatar"></div><h4>Chandhupa Chamupathi</h4><p>Business Model &amp; Partnerships</p></div>
+      <div class="member"><div class="avatar"></div><h4>Isuru Sathsara</h4><p>Market Research Lead</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="cta-block reveal">
+      <div class="eyebrow" style="justify-content:center;">HackX 11.0 · Marketplace / Gig Economy</div>
+      <h2>Rakiya means "job."</h2>
+      <p>A hyperlocal marketplace digitizing the full lifecycle of Sri Lanka's informal daily work — discovery, matching, and verified proof of completion.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://youtu.be/sGaUA3cHLgE" target="_blank" rel="noopener">Watch the pitch video</a>
+        <a class="btn btn-ghost" href="#problem">Read the plan</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Rakiya — Team Inovex, University of Kelaniya</span>
+      <span>Built for HackX 11.0 Inter-University Startup Challenge</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ---------- Scroll reveal ---------- */
+(function(){
+  var els = document.querySelectorAll('.reveal, .reveal-stagger');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.15});
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+/* ---------- Mobile nav (simple show/hide, degrades gracefully) ---------- */
+
+/* ---------- Hero 3D Proximity Field ---------- */
+(function(){
+  var canvas = document.getElementById('field-canvas');
+  if(!canvas || typeof THREE === 'undefined') return;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(50, canvas.clientWidth/canvas.clientHeight, 0.1, 100);
+  camera.position.set(0, 5.2, 8.5);
+  camera.lookAt(0,0,0);
+
+  var renderer = new THREE.WebGLRenderer({canvas:canvas, alpha:true, antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  function resize(){
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+
+  /* glow sprite texture */
+  function glowTexture(color){
+    var c = document.createElement('canvas'); c.width=c.height=128;
+    var ctx = c.getContext('2d');
+    var g = ctx.createRadialGradient(64,64,0,64,64,64);
+    g.addColorStop(0, color+'ff');
+    g.addColorStop(0.35, color+'aa');
+    g.addColorStop(1, color+'00');
+    ctx.fillStyle = g; ctx.fillRect(0,0,128,128);
+    return new THREE.CanvasTexture(c);
+  }
+  var tealTex = glowTexture('#2fd1c4');
+  var saffronTex = glowTexture('#f5a93c');
+
+  /* dot-grid "terrain" */
+  var GRID = 46, SPACING = 0.34;
+  var gridGeo = new THREE.BufferGeometry();
+  var positions = new Float32Array(GRID*GRID*3);
+  var basePositions = [];
+  var idx = 0;
+  for(var i=0;i<GRID;i++){
+    for(var j=0;j<GRID;j++){
+      var x = (i-GRID/2)*SPACING;
+      var z = (j-GRID/2)*SPACING;
+      var y = 0;
+      positions[idx]=x; positions[idx+1]=y; positions[idx+2]=z;
+      basePositions.push(x,y,z);
+      idx+=3;
+    }
+  }
+  gridGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  var gridMat = new THREE.PointsMaterial({color:0x2fd1c4, size:0.028, transparent:true, opacity:0.35, sizeAttenuation:true});
+  var gridPoints = new THREE.Points(gridGeo, gridMat);
+  scene.add(gridPoints);
+
+  /* markers: employers (saffron) + workers (teal) scattered on the grid */
+  function randRange(a,b){ return a + Math.random()*(b-a); }
+  var markers = [];
+  var markerGroup = new THREE.Group();
+  scene.add(markerGroup);
+
+  function addMarker(x,z,color,tex,isEmployer){
+    var mat = new THREE.SpriteMaterial({map:tex, color:color, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending});
+    var sprite = new THREE.Sprite(mat);
+    sprite.scale.set(isEmployer?0.55:0.4, isEmployer?0.55:0.4, 1);
+    sprite.position.set(x,0.05,z);
+    markerGroup.add(sprite);
+    return {sprite:sprite, x:x, z:z, isEmployer:isEmployer};
+  }
+
+  var employers = [];
+  var workers = [];
+  for(var e=0;e<3;e++){
+    var ex = randRange(-3.2,3.2), ez = randRange(-2.6,2.6);
+    employers.push(addMarker(ex,ez,0xf5a93c,saffronTex,true));
+  }
+  for(var w=0;w<10;w++){
+    var wx = randRange(-3.8,3.8), wz = randRange(-3.2,3.2);
+    workers.push(addMarker(wx,wz,0x2fd1c4,tealTex,false));
+  }
+
+  /* pulse rings around employers */
+  var ringGroup = new THREE.Group();
+  scene.add(ringGroup);
+  var rings = employers.map(function(emp){
+    var geo = new THREE.RingGeometry(0.01,0.02,48);
+    var mat = new THREE.MeshBasicMaterial({color:0xf5a93c, transparent:true, opacity:0.5, side:THREE.DoubleSide});
+    var mesh = new THREE.Mesh(geo,mat);
+    mesh.rotation.x = -Math.PI/2;
+    mesh.position.set(emp.x, 0.02, emp.z);
+    ringGroup.add(mesh);
+    return {mesh:mesh, emp:emp, t:Math.random()};
+  });
+
+  /* connection lines (curved, fade in/out) */
+  var lineGroup = new THREE.Group();
+  scene.add(lineGroup);
+  var connections = [];
+  function nearestWorkers(emp, n){
+    return workers.slice().sort(function(a,b){
+      var da = Math.hypot(a.x-emp.x, a.z-emp.z);
+      var db = Math.hypot(b.x-emp.x, b.z-emp.z);
+      return da-db;
+    }).slice(0,n);
+  }
+  employers.forEach(function(emp){
+    nearestWorkers(emp,2).forEach(function(wk){
+      var mid = new THREE.Vector3((emp.x+wk.x)/2, 0.8, (emp.z+wk.z)/2);
+      var curve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(emp.x,0.03,emp.z), mid, new THREE.Vector3(wk.x,0.03,wk.z)
+      );
+      var pts = curve.getPoints(30);
+      var geo = new THREE.BufferGeometry().setFromPoints(pts);
+      var mat = new THREE.LineBasicMaterial({color:0x9fe8e0, transparent:true, opacity:0});
+      var line = new THREE.Line(geo,mat);
+      lineGroup.add(line);
+      connections.push({line:line, mat:mat, phase:Math.random()*Math.PI*2, speed:0.35+Math.random()*0.25});
+    });
+  });
+
+  var mouseX=0, mouseY=0;
+  window.addEventListener('mousemove', function(ev){
+    mouseX = (ev.clientX/window.innerWidth - 0.5);
+    mouseY = (ev.clientY/window.innerHeight - 0.5);
+  });
+
+  var clock = new THREE.Clock();
+  function animate(){
+    var t = clock.getElapsedTime();
+
+    /* gentle terrain wave */
+    var posAttr = gridGeo.attributes.position;
+    for(var k=0;k<GRID*GRID;k++){
+      var bx = basePositions[k*3], bz = basePositions[k*3+2];
+      var y = Math.sin(bx*0.9 + t*0.5)*0.05 + Math.cos(bz*0.9 + t*0.4)*0.05;
+      posAttr.setY(k,y);
+    }
+    posAttr.needsUpdate = true;
+
+    /* pulse rings */
+    rings.forEach(function(r){
+      r.t += 0.006;
+      if(r.t>1) r.t=0;
+      var scale = r.t*2.6;
+      r.mesh.geometry.dispose();
+      r.mesh.geometry = new THREE.RingGeometry(scale, scale+0.02, 48);
+      r.mesh.material.opacity = 0.5*(1-r.t);
+    });
+
+    /* connection lines fade in/out */
+    connections.forEach(function(c){
+      c.phase += 0.01*c.speed*10*0.02;
+      var o = (Math.sin(t*c.speed + c.phase)+1)/2;
+      c.mat.opacity = Math.max(0, o-0.4)*1.2;
+    });
+
+    /* marker bob */
+    markerGroup.children.forEach(function(s,i){
+      s.position.y = 0.05 + Math.sin(t*1.2+i)*0.02;
+    });
+
+    /* camera parallax + slow orbit */
+    var targetX = reduceMotion ? 0 : mouseX*1.1;
+    var targetY = reduceMotion ? 5.2 : 5.2 + mouseY*0.4;
+    camera.position.x += (targetX - camera.position.x)*0.03;
+    camera.position.y += (targetY - camera.position.y)*0.03;
+    var orbit = reduceMotion ? 0 : Math.sin(t*0.05)*0.6;
+    camera.position.z = 8.5 + orbit*0;
+    camera.lookAt(0,0,0);
+
+    renderer.render(scene, camera);
+    if(!reduceMotion) requestAnimationFrame(animate);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  animate();
+  if(reduceMotion){ renderer.render(scene,camera); }
+})();
+</script>
+</body>
+</html>
