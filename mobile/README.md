@@ -4,7 +4,7 @@ React Native / Expo SDK 57. Uses native controls and the existing Django backend
 
 ## Free physical-device preview
 
-1. Install the official **Expo Go** app on the A56 from Google Play. Do not pay for Expo cloud services.
+1. Install the official **Expo Go** app on the Anrdoid from Google Play. Do not pay for Expo cloud services.
 2. Connect the PC and phone to the same **trusted private Wi-Fi**. Avoid guest Wi-Fi/client isolation; temporarily disconnect a VPN if it prevents local connectivity.
 3. From the repository, run **Start phone backend.cmd**. It binds only to a private PC address on port 8001 and prints `PHONE SERVER ADDRESS`. Keep the window open. Use test credentials only on this HTTP development connection.
 4. Run **Start mobile app.cmd**, keep that window open, and scan its QR code from Expo Go.
