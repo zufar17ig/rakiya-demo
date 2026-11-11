@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+*.sqlite3
+.local-secret
+.env
+staticfiles/
+test-results/
+tmp-server*.log
+node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/android/
+mobile/ios/
+*.jks
+*.keystore

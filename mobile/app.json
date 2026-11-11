@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Rakiya",
+    "slug": "rakiya",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/rakiya-icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rakiya.pilot"
+    },
+    "android": {
+      "package": "com.rakiya.pilot",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/rakiya-adaptive.png",
+        "backgroundColor": "#4741A6"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Rakiya to find nearby jobs when you choose to use your location."
+        }
+      ],
+      "expo-router"
+    ],
+    "scheme": "rakiya"
+  }
+}
